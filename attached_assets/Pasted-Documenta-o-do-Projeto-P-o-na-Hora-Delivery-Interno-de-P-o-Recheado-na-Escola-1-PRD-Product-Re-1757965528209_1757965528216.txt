@@ -1,0 +1,261 @@
+Documentação do Projeto: Pão na Hora (Delivery Interno de Pão Recheado na Escola)
+1. PRD (Product Requirements Document) – Documento de Requisitos do Produto
+Objetivo do Produto
+O "Pão na Hora" é um sistema web/mobile de pré-agendamento para venda de pães recheados em escolas, usando Flask (API backend) e React (frontend). Ele otimiza entregas no intervalo escolar (10-20 minutos), aumenta vendas e diferencia o vendedor de concorrentes (ex.: "tias"). O objetivo é maximizar receita com eficiência logística e conveniência para alunos.
+Hipótese assumida: O vendedor produz 50-100 pães/dia; escola tem 500-1000 alunos; smartphones estão disponíveis para ~70% dos alunos.
+Problema que Resolve
+
+Intervalos curtos: Venda manual sala a sala é lenta; pré-agendamento organiza pedidos.
+Concorrência: "Tias" dominam vendas impulsivas; sistema digital oferece personalização e rapidez.
+Gestão ineficiente: Pedidos/pagamentos manuais causam erros; automação melhora rastreamento.
+
+Contraponto: Alunos podem preferir compras impulsivas, ignorando o app. Regulamentações escolares podem proibir vendas digitais.
+Público-Alvo / Personas
+
+Aluno Adolescente (80%): João, 15 anos, quer lanches rápidos e personalizados; usa smartphone, mas evita apps complexos.
+Professor/Funcionário (15%): Maria, 35 anos, busca conveniência; prefere pagamentos digitais.
+Vendedor/Admin (5%): Você, gerencia pedidos/entregas; precisa de dashboard simples.
+
+Hipótese assumida: 70% dos alunos têm smartphones; 30% podem usar formulários off-line como fallback.
+Funcionalidades Principais (com Exemplos)
+
+Cadastro/Login: Usuário cria conta com nome, sala, WhatsApp. Ex.: João se cadastra via link no grupo da turma.
+Catálogo: Lista de pães (ex.: frango R$4, chocolate R$3). Ex.: Filtro por recheio.
+Pré-Agendamento: Escolher itens, quantidade, horário/sala. Ex.: João agenda 2 pães para sala 101 às 10h.
+Pagamento: PIX ou dinheiro na entrega. Ex.: QR Code gerado no app.
+Admin Dashboard: Gerenciar pedidos, estoque, entregas. Ex.: Notifica "estoque baixo de queijo".
+Notificações: Confirmações via WhatsApp. Ex.: "Pedido confirmado para 10:15h".
+
+Fluxo de Usuário
+
+Acessa app via navegador (ou app nativo).
+Cadastra-se/login (1-2 min).
+Navega catálogo, seleciona itens.
+Agenda entrega (horário/sala).
+Paga via PIX ou confirma dinheiro.
+Recebe notificação de confirmação.
+Vendedor entrega no intervalo; usuário avalia (opcional).
+
+2. SRS (Software Requirements Specification) – Especificação de Requisitos de Software
+Requisitos Funcionais
+
+RF1: Cadastro/login com validação (nome, sala, contato).
+RF2: Exibir catálogo com busca/filtro.
+RF3: Criar/editar pedidos (itens, quantidade, horário).
+RF4: Processar pagamentos PIX (Mercado Pago API).
+RF5: Gerenciar estoque em tempo real.
+RF6: Relatórios de vendas/entregas para admin.
+RF7: Notificações via WhatsApp (Twilio API).
+RF8: Suporte a múltiplos admins.
+
+Requisitos Não Funcionais
+
+Performance: Resposta <2s; suporta 200 usuários simultâneos.
+Segurança: JWT para autenticação; LGPD para dados pessoais.
+Escalabilidade: Inicial para 1 escola; expansível via cloud.
+Usabilidade: Mobile-first; suporta navegadores low-end (ex.: Chrome em Android 8).
+Confiabilidade: Uptime 99%; backups diários.
+Manutenibilidade: Código modular; documentação em docstrings.
+
+Hipótese assumida: Sem acessibilidade avançada, mas recomendável adicionar (ex.: suporte a leitores de tela).
+Casos de Uso
+
+Caso 1: Fazer Pedido
+Atores: Aluno.
+Pré-condições: Logado, estoque disponível.
+Fluxo: Selecionar produto > Carrinho > Escolher entrega > Pagar > Confirmar.
+Alternativo: Estoque esgotado > Sugerir outro recheio.
+
+
+Caso 2: Gerenciar Entregas
+Atores: Admin.
+Fluxo: Visualizar pedidos > Roteirizar por sala > Marcar entregue.
+
+
+Caso 3: Cancelar Pedido
+Atores: Aluno/Admin.
+Fluxo: Selecionar pedido > Confirmar cancelamento > Reembolsar (se pago).
+
+
+
+Fluxos de Interação (Texto como Sequence Diagram)
+Usuário -> React Frontend: Solicita catálogo
+Frontend -> Flask API: GET /produtos
+API -> SQLite: Consulta produtos
+SQLite -> API: Retorna dados
+API -> Frontend: JSON com produtos
+Frontend -> Usuário: Exibe catálogo
+Usuário -> Frontend: Envia pedido
+Frontend -> API: POST /pedidos
+API -> Mercado Pago: Valida PIX
+API -> Twilio: Envia notificação
+API -> Admin: Notifica pedido
+
+3. System Design Document / Arquitetura de Software
+Arquitetura Geral
+Arquitetura client-server monolítica:
+
+Frontend: React SPA, hospedada via CDN (jsDelivr).
+Backend: Flask API, deploy em Heroku (MVP) ou AWS para produção.
+Banco de Dados: SQLite (MVP); PostgreSQL para escalabilidade.
+Integrações: Mercado Pago (PIX), Twilio (WhatsApp).
+
+Diagrama Textual:
+[React SPA] <-> [Flask API] <-> [SQLite/PostgreSQL]
+                       |
+           [Mercado Pago | Twilio]
+
+Tecnologias Recomendadas
+
+Backend: Python 3.9, Flask 2.0, Flask-RESTful, Flask-JWT-Extended.
+Frontend: React 18, Tailwind CSS (via CDN), Axios para chamadas API.
+Banco de Dados: SQLite (MVP); PostgreSQL (produção).
+Outros: Mercado Pago API (PIX), Twilio API (notificações), jsDelivr para CDN.
+
+Estrutura do Banco de Dados
+
+Users: id (PK), nome (varchar), sala (varchar), contato (varchar), role (varchar: user/admin).
+Produtos: id (PK), nome (varchar), descricao (text), preco (float), estoque (int).
+Pedidos: id (PK), user_id (FK), produto_id (FK), quantidade (int), horario_entrega (datetime), status (varchar), pagamento_status (varchar).
+Relações: Users 1:N Pedidos; Produtos 1:N Pedidos.
+
+Estrutura de APIs
+
+GET /api/produtos: Parâmetros: ?filtro=recheio; Retorno: { id, nome, preco, estoque }.
+POST /api/pedidos: Parâmetros: { user_id, itens: [{ produto_id, quantidade }], horario, sala }; Retorno: { pedido_id, status }.
+PUT /api/pedidos/{id}: Parâmetros: { status }; Retorno: { pedido_id, status } (autenticado).
+GET /api/dashboard: Parâmetros: admin_id; Retorno: { vendas, pedidos_pendentes } (autenticado).
+
+Integrações Externas
+
+Mercado Pago: API para gerar QR Codes PIX.
+Twilio: API WhatsApp para notificações.
+Firebase Auth: Autenticação JWT (opcional, para simplicidade).
+
+Exemplo de Código (Flask API)
+from flask import Flask, request, jsonify
+from flask_restful import Resource, Api
+from flask_jwt_extended import JWTManager, jwt_required
+import sqlite3
+
+app = Flask(__name__)
+api = Api(app)
+app.config['JWT_SECRET_KEY'] = 'super-secret'  # Substituir por variável de ambiente
+jwt = JWTManager(app)
+
+class Produtos(Resource):
+    def get(self):
+        conn = sqlite3.connect('paonahora.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM produtos")
+        produtos = [{'id': r[0], 'nome': r[1], 'preco': r[2], 'estoque': r[3]} for r in cursor.fetchall()]
+        conn.close()
+        return jsonify(produtos)
+
+class Pedidos(Resource):
+    @jwt_required()
+    def post(self):
+        data = request.get_json()
+        conn = sqlite3.connect('paonahora.db')
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO pedidos (user_id, produto_id, quantidade, horario_entrega, status) VALUES (?, ?, ?, ?, ?)",
+                      (data['user_id'], data['produto_id'], data['quantidade'], data['horario'], 'pendente'))
+        conn.commit()
+        pedido_id = cursor.lastrowid
+        conn.close()
+        return jsonify({'pedido_id': pedido_id, 'status': 'pendente'})
+
+api.add_resource(Produtos, '/api/produtos')
+api.add_resource(Pedidos, '/api/pedidos')
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+Exemplo de Código (React Frontend)
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import 'tailwindcss/tailwind.css';
+
+const Catalogo = () => {
+  const [produtos, setProdutos] = useState([]);
+
+  useEffect(() => {
+    axios.get('https://api.paonahora.com/api/produtos')
+      .then(response => setProdutos(response.data))
+      .catch(error => console.error('Erro ao carregar produtos:', error));
+  }, []);
+
+  const handlePedir = (produtoId) => {
+    axios.post('https://api.paonahora.com/api/pedidos', {
+      user_id: 1, // Substituir por ID do usuário autenticado
+      produto_id: produtoId,
+      quantidade: 1,
+      horario: '10:15',
+      sala: '101'
+    }).then(response => alert('Pedido realizado!'))
+      .catch(error => console.error('Erro ao fazer pedido:', error));
+  };
+
+  return (
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold">Pão na Hora</h1>
+      <div className="grid grid-cols-1 gap-4">
+        {produtos.map(produto => (
+          <div key={produto.id} className="border p-4 rounded">
+            <h2>{produto.nome}</h2>
+            <p>R${produto.preco.toFixed(2)}</p>
+            <button onClick={() => handlePedir(produto.id)} className="bg-blue-500 text-white p-2 rounded">
+              Pedir
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default Catalogo;
+
+4. Roadmap + Backlog (Agile)
+Fases
+
+MVP (6 semanas): Cadastro, catálogo, pedidos básicos (sem pagamento integrado).
+Beta (4 semanas): Integração PIX, notificações WhatsApp, dashboard admin.
+Final (4 semanas): Relatórios, otimizações, segurança reforçada.
+
+Entregáveis por Sprint
+
+Sprint 1 (Semana 1-2): Flask API (cadastro, produtos); React frontend básico; SQLite setup.
+Sprint 2 (Semana 3-4): API pedidos; frontend carrinho; deploy Heroku.
+Sprint 3 (Semana 5-8): Integração Mercado Pago/Twilio; testes end-to-end.
+Sprint 4 (Semana 9-12): Dashboard admin; relatórios; segurança (JWT).
+
+Priorização
+
+Alta: Cadastro, catálogo, pedidos (essenciais para MVP).
+Média: Pagamentos, notificações (melhoram experiência).
+Baixa: Relatórios detalhados, escalabilidade (pós-lançamento).
+
+5. Extras Importantes
+Riscos Potenciais e Mitigações
+
+Baixa Adesão: Alunos preferem "tias". Mitigação: Teste piloto com descontos; marketing via grupos de WhatsApp.
+Restrições Escolares: Proibição de apps. Mitigação: Aprovação prévia da escola; fallback off-line (formulários).
+Complexidade Técnica: Flask/React exige manutenção. Mitigação: Usar templates Flask como fallback; contratar freelancer se necessário.
+Custos: Desenvolvimento ~R$10.000. Mitigação: MVP com ferramentas gratuitas (Heroku, SQLite).
+Logística: Entregas atrasadas. Mitigação: Limitar pedidos iniciais (50/dia); roteirização otimizada.
+
+Métricas de Sucesso
+
+Adesão: 20% dos alunos cadastrados (100-200) em 1 mês; 50 pedidos/semana.
+Vendas: Aumento de 30% vs. manual; retenção 70%.
+Satisfação: NPS >7/10; cancelamentos <10%.
+Financeiro: ROI positivo em 3 meses.
+Técnico: Latência API <2s; uptime 99%.
+
+Futuras Expansões
+
+PWA para uso off-line.
+Mais produtos (ex.: sucos).
+Expansão para outras escolas.
+IA para sugestões de pedidos.

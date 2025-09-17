@@ -1,0 +1,147 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(36, 100%, 98%);
+  --foreground: hsl(36, 8%, 8%);
+  --card: hsl(36, 50%, 96%);
+  --card-foreground: hsl(36, 8%, 15%);
+  --popover: hsl(36, 100%, 100%);
+  --popover-foreground: hsl(36, 100%, 2%);
+  --primary: hsla(231, 51%, 28%, 1.00);
+  --primary-foreground: hsl(36, 100%, 98%);
+  --secondary: hsl(28, 54%, 25%);
+  --secondary-foreground: hsl(36, 100%, 98%);
+  --muted: hsl(36, 33%, 94%);
+  --muted-foreground: hsl(36, 8%, 45%);
+  --accent: hsl(142, 76%, 36%);
+  --accent-foreground: hsl(36, 100%, 98%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(36, 100%, 98%);
+  --border: hsl(36, 33%, 88%);
+  --input: hsl(36, 33%, 88%);
+  --ring: hsla(231, 51%, 28%, 1.00);
+  --sidebar: hsl(36, 50%, 96%);
+  --sidebar-foreground: hsl(36, 8%, 15%);
+  --sidebar-primary: hsla(231, 51%, 28%, 1.00);
+  --sidebar-primary-foreground: hsl(36, 100%, 98%);
+  --sidebar-accent: hsl(36, 33%, 94%);
+  --sidebar-accent-foreground: hsla(231, 51%, 28%, 1.00);
+  --sidebar-border: hsl(36, 33%, 88%);
+  --sidebar-ring: hsla(231, 51%, 28%, 1.00);
+  --font-sans: Inter, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: Menlo, monospace;
+  --radius: 8px;
+  --shadow-2xs: 0px 2px 0px 0px hsl(22, 93%, 53%, 0.00);
+  --shadow-xs: 0px 2px 0px 0px hsl(22, 93%, 53%, 0.00);
+  --shadow-sm: 0px 2px 0px 0px hsl(22, 93%, 53%, 0.00), 0px 1px 2px -1px hsl(22, 93%, 53%, 0.00);
+  --shadow: 0px 2px 0px 0px hsl(22, 93%, 53%, 0.00), 0px 1px 2px -1px hsl(22, 93%, 53%, 0.00);
+  --shadow-md: 0px 2px 0px 0px hsl(22, 93%, 53%, 0.00), 0px 2px 4px -1px hsl(22, 93%, 53%, 0.00);
+  --shadow-lg: 0px 2px 0px 0px hsl(22, 93%, 53%, 0.00), 0px 4px 6px -1px hsl(22, 93%, 53%, 0.00);
+  --shadow-xl: 0px 2px 0px 0px hsl(22, 93%, 53%, 0.00), 0px 8px 10px -1px hsl(22, 93%, 53%, 0.00);
+  --shadow-2xl: 0px 2px 0px 0px hsl(22, 93%, 53%, 0.00);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+}
+
+.dark {
+  --background: hsl(0, 0%, 0%);
+  --foreground: hsl(36, 8%, 91.1765%);
+  --card: hsl(28, 9.8039%, 10%);
+  --card-foreground: hsl(36, 8%, 85.0980%);
+  --popover: hsl(0, 0%, 0%);
+  --popover-foreground: hsl(36, 8%, 91.1765%);
+  --primary: hsla(231, 51%, 28%, 1.00);
+  --primary-foreground: hsl(36, 100%, 98%);
+  --secondary: hsl(28, 54%, 25%);
+  --secondary-foreground: hsl(36, 100%, 98%);
+  --muted: hsl(36, 8%, 9.4118%);
+  --muted-foreground: hsl(36, 8%, 46.2745%);
+  --accent: hsl(142, 76%, 36%);
+  --accent-foreground: hsl(36, 100%, 98%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(36, 100%, 98%);
+  --border: hsl(36, 8%, 14.9020%);
+  --input: hsl(36, 8%, 18.4314%);
+  --ring: hsla(231, 51%, 28%, 1.00);
+  --sidebar: hsl(28, 9.8039%, 10%);
+  --sidebar-foreground: hsl(36, 8%, 85.0980%);
+  --sidebar-primary: hsla(231, 51%, 28%, 1.00);
+  --sidebar-primary-foreground: hsl(36, 100%, 98%);
+  --sidebar-accent: hsl(36, 8%, 9.4118%);
+  --sidebar-accent-foreground: hsla(231, 51%, 28%, 1.00);
+  --sidebar-border: hsl(36, 8%, 14.9020%);
+  --sidebar-ring: hsla(231, 51%, 28%, 1.00);
+  --font-sans: Inter, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: Menlo, monospace;
+  --radius: 8px;
+  --shadow-2xs: 0px 2px 0px 0px hsl(22, 93%, 53%, 0.00);
+  --shadow-xs: 0px 2px 0px 0px hsl(22, 93%, 53%, 0.00);
+  --shadow-sm: 0px 2px 0px 0px hsl(22, 93%, 53%, 0.00), 0px 1px 2px -1px hsl(22, 93%, 53%, 0.00);
+  --shadow: 0px 2px 0px 0px hsl(22, 93%, 53%, 0.00), 0px 1px 2px -1px hsl(22, 93%, 53%, 0.00);
+  --shadow-md: 0px 2px 0px 0px hsl(22, 93%, 53%, 0.00), 0px 2px 4px -1px hsl(22, 93%, 53%, 0.00);
+  --shadow-lg: 0px 2px 0px 0px hsl(22, 93%, 53%, 0.00), 0px 4px 6px -1px hsl(22, 93%, 53%, 0.00);
+  --shadow-xl: 0px 2px 0px 0px hsl(22, 93%, 53%, 0.00), 0px 8px 10px -1px hsl(22, 93%, 53%, 0.00);
+  --shadow-2xl: 0px 2px 0px 0px hsl(22, 93%, 53%, 0.00);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+/* Order status colors */
+.order-status-pending { 
+  @apply bg-yellow-100 text-yellow-800 border-yellow-200; 
+}
+.order-status-confirmed { 
+  @apply bg-blue-100 text-blue-800 border-blue-200; 
+}
+.order-status-preparing { 
+  @apply bg-orange-100 text-orange-800 border-orange-200; 
+}
+.order-status-ready { 
+  @apply bg-green-100 text-green-800 border-green-200; 
+}
+.order-status-delivered { 
+  @apply bg-gray-100 text-gray-800 border-gray-200; 
+}
+.order-status-cancelled { 
+  @apply bg-red-100 text-red-800 border-red-200; 
+}
+
+/* Animations */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.notification-enter {
+  animation: slideInRight 0.3s ease-out;
+}
+
+/* Tab content visibility */
+.tab-content { 
+  display: none; 
+}
+.tab-content.active { 
+  display: block; 
+}
+
+.admin-tab-content.hidden {
+  display: none;
+}
