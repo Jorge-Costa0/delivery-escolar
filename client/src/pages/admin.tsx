@@ -362,7 +362,7 @@ export default function Admin() {
                 <div>
                   <p className="text-sm text-muted-foreground">Receita Hoje</p>
                   <p className="text-2xl font-bold text-card-foreground" data-testid="text-revenue-today">
-                    Kz {stats?.revenueToday?.toFixed(2) || "0,00"}
+                     {stats?.revenueToday?.toFixed(2) || "0,00"} Kz
                   </p>
                 </div>
                 <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center">
@@ -734,7 +734,7 @@ export default function Admin() {
                 <Input
                   id="stock"
                   type="number"
-                  {...productForm.register("stock")}
+                  {...productForm.register("stock", { valueAsNumber: true })}
                   data-testid="input-product-stock"
                 />
                 {productForm.formState.errors.stock && (
