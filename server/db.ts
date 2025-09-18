@@ -1,4 +1,4 @@
-// server/db.ts  (substitua o arquivo existente por este)
+// server/db.ts
 import 'dotenv/config';
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
@@ -10,14 +10,14 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-// Cria cliente usando o pacote 'postgres' (conecta diretamente ao Postgres)
+// Cria cliente usando o pacote 'postgres' (conecta ao Neon)
 const sql = postgres(process.env.DATABASE_URL, {
-  ssl: false, // se usa SSL (ex.: em produção) ajuste aqui
-  max: 10,    // conexões pool (ajuste conforme necessidade)
+  ssl: true,  // ✅ obrigatório no Neon
+  max: 10,    // conexões no pool
 });
 
-// Cria a instância do Drizzle ligada ao cliente 'postgres'
+// Instância do Drizzle conectada ao cliente postgres
 export const db = drizzle(sql, { schema });
 
-// Exporta também a instância raw caso precise executar queries ad-hoc
+// Exporta também o client raw caso precise de queries manuais
 export const sqlClient = sql;
