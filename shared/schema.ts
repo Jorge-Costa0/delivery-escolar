@@ -89,18 +89,30 @@ export const insertUserSchema = createInsertSchema(users).omit({
   createdAt: true,
 });
 
-export const insertProductSchema = createInsertSchema(products).omit({
+export const insertProductSchema = createInsertSchema(products, {
+  stock: z.preprocess((val) => Number(val), z.number().int().min(0)),
+  price: z.preprocess((val) => Number(val), z.number().min(0)),
+  rating: z.preprocess((val) => Number(val), z.number().min(0).max(5)).optional(),
+  reviewCount: z.preprocess((val) => Number(val), z.number().int().min(0)).optional(),
+}).omit({
   id: true,
   createdAt: true,
 });
 
-export const insertOrderSchema = createInsertSchema(orders).omit({
+export const insertOrderSchema = createInsertSchema(orders, {
+  subtotal: z.preprocess((val) => Number(val), z.number().min(0)),
+  total: z.preprocess((val) => Number(val), z.number().min(0)),
+}).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
 });
 
-export const insertOrderItemSchema = createInsertSchema(orderItems).omit({
+export const insertOrderItemSchema = createInsertSchema(orderItems, {
+  quantity: z.preprocess((val) => Number(val), z.number().int().min(1)),
+  unitPrice: z.preprocess((val) => Number(val), z.number().min(0)),
+  subtotal: z.preprocess((val) => Number(val), z.number().min(0)),
+}).omit({
   id: true,
 });
 
