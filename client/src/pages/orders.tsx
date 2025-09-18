@@ -4,6 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
 import Header from "@/components/header";
 import OrderCard from "@/components/order-card";
@@ -18,6 +27,7 @@ interface OrderWithRelations extends Order {
 export default function Orders() {
   const [, setLocation] = useLocation();
   const [statusFilter, setStatusFilter] = useState("all");
+  const [orderToCancel, setOrderToCancel] = useState<string | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -58,6 +68,7 @@ export default function Orders() {
         description: "Seu pedido foi cancelado com sucesso.",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/orders"] });
+      setOrderToCancel(null);
     },
     onError: (error: any) => {
       toast({
@@ -69,12 +80,11 @@ export default function Orders() {
   });
 
   const handleCancelOrder = (orderId: string) => {
-    if (window.confirm("Tem certeza que deseja cancelar este pedido?")) {
-      cancelOrderMutation.mutate(orderId);
-    }
+    setOrderToCancel(orderId);
   };
 
   const handleLogout = () => {
+    authService.logout(); // limpa token/localStorage
     setLocation("/");
   };
 
@@ -85,42 +95,38 @@ export default function Orders() {
 
   const filterButtons = [
     { value: "all", label: "Todos", count: orders.length },
-    { value: "pending", label: "Pendentes", count: orders.filter(o => o.status === 'pending').length },
-    { value: "confirmed", label: "Confirmados", count: orders.filter(o => o.status === 'confirmed').length },
-    { value: "delivered", label: "Entregues", count: orders.filter(o => o.status === 'delivered').length },
+    { value: "pending", label: "Pendentes", count: orders.filter(o => o.status === "pending").length },
+    { value: "confirmed", label: "Confirmados", count: orders.filter(o => o.status === "confirmed").length },
+    { value: "delivered", label: "Entregues", count: orders.filter(o => o.status === "delivered").length },
   ];
 
   return (
     <div className="min-h-screen bg-background">
-      <Header 
-        cartCount={0}
-        onCartClick={() => {}}
-        onLogout={handleLogout}
-      />
+      <Header cartCount={0} onCartClick={() => {}} onLogout={handleLogout} />
 
       {/* Navigation Tabs */}
       <nav className="bg-card border-b border-border">
         <div className="container mx-auto px-4">
           <Tabs value="orders" className="w-full">
             <TabsList className="h-auto p-0 bg-transparent">
-              <TabsTrigger 
-                value="catalog" 
+              <TabsTrigger
+                value="catalog"
                 className="px-6 py-3 border-b-2 border-transparent text-muted-foreground hover:text-foreground bg-transparent data-[state=active]:bg-transparent rounded-none"
                 onClick={() => setLocation("/")}
                 data-testid="tab-catalog"
               >
                 🏪 Catálogo
               </TabsTrigger>
-              <TabsTrigger 
-                value="orders" 
+              <TabsTrigger
+                value="orders"
                 className="px-6 py-3 border-b-2 border-primary text-primary bg-transparent data-[state=active]:bg-transparent rounded-none"
                 data-testid="tab-orders"
               >
                 📋 Meus Pedidos
               </TabsTrigger>
               {authService.isAdmin() && (
-                <TabsTrigger 
-                  value="admin" 
+                <TabsTrigger
+                  value="admin"
                   className="px-6 py-3 border-b-2 border-transparent text-muted-foreground hover:text-foreground bg-transparent data-[state=active]:bg-transparent rounded-none"
                   onClick={() => setLocation("/admin")}
                   data-testid="tab-admin"
@@ -159,19 +165,21 @@ export default function Orders() {
         {/* Orders List */}
         {isLoading ? (
           <div className="flex justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" data-testid="loading-orders"></div>
+            <div
+              className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"
+              data-testid="loading-orders"
+            ></div>
           </div>
         ) : orders.length === 0 ? (
           <div className="text-center py-12" data-testid="text-no-orders">
             <p className="text-muted-foreground text-lg">Nenhum pedido encontrado</p>
             <p className="text-muted-foreground">
-              {statusFilter === "all" 
+              {statusFilter === "all"
                 ? "Você ainda não fez nenhum pedido"
-                : `Nenhum pedido com status "${statusFilter}"`
-              }
+                : `Nenhum pedido com status "${statusFilter}"`}
             </p>
-            <Button 
-              className="mt-4" 
+            <Button
+              className="mt-4"
               onClick={() => setLocation("/")}
               data-testid="button-browse-products"
             >
@@ -181,15 +189,29 @@ export default function Orders() {
         ) : (
           <div className="space-y-4" data-testid="list-orders">
             {orders.map((order) => (
-              <OrderCard
-                key={order.id}
-                order={order}
-                onCancelOrder={handleCancelOrder}
-              />
+              <OrderCard key={order.id} order={order} onCancelOrder={handleCancelOrder} />
             ))}
           </div>
         )}
       </main>
+
+      {/* Cancel Order Dialog */}
+      <AlertDialog open={!!orderToCancel} onOpenChange={() => setOrderToCancel(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Cancelar pedido</AlertDialogTitle>
+          </AlertDialogHeader>
+          <p>Tem certeza que deseja cancelar este pedido?</p>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setOrderToCancel(null)}>Voltar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => orderToCancel && cancelOrderMutation.mutate(orderToCancel)}
+            >
+              Cancelar Pedido
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

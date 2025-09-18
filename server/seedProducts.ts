@@ -5,7 +5,7 @@ const seedProducts = [
   {
     name: "Pão Francês",
     description: "Pãozinho tradicional brasileiro, crocante por fora e macio por dentro",
-    price: "0.75",
+    price: "200",
     stock: 200,
     imageUrl: null,
     rating: "4.8",

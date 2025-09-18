@@ -1,5 +1,5 @@
 CREATE TYPE "public"."order_status" AS ENUM('pending', 'confirmed', 'preparing', 'ready', 'delivered', 'cancelled');--> statement-breakpoint
-CREATE TYPE "public"."payment_method" AS ENUM('pix', 'cash');--> statement-breakpoint
+CREATE TYPE "public"."payment_method" AS ENUM('cartão', 'dinheiro');--> statement-breakpoint
 CREATE TYPE "public"."user_role" AS ENUM('student', 'admin');--> statement-breakpoint
 CREATE TABLE "order_items" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
